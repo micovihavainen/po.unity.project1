@@ -57,6 +57,11 @@
   <ItemGroup>
     <Compile Include="Assets\PlayerController.cs" />
     <Compile Include="Assets\CameraController.cs" />
+    <Compile Include="Assets\ButtonController.cs" />
+    <Compile Include="Assets\MainMenu.cs" />
+    <Compile Include="Assets\DoorFinish.cs" />
+    <Compile Include="Assets\InstructionCamController.cs" />
+    <Compile Include="Assets\Instructions.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

@@ -6,22 +6,23 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D PlayerRb;
     private Animator PlayerAnim;
-    public float speed = 10;
-    public float jumpforce = 12;
+
+    private float speed = 10;
+    private float jumpforce = 12;
     private bool isGrounded = true;
 
-    public Transform explosion;
-
-    public int health = 5;
+    private int health = 3;
     public TextMeshProUGUI healthtext;
-
+    private int cherries = 0;
     public TextMeshProUGUI cherrytext;
-    public int cherries = 0;
+    private int gems = 0;
+    public TextMeshProUGUI gemtext;
     void Start()
     {
         PlayerRb = GetComponent<Rigidbody2D>();
@@ -59,7 +60,6 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Jumping", true);
             isGrounded = false;
-            explosion.GetComponent<ParticleSystem>().Play(explosion);
         }
 
         // Ground check fix
@@ -73,12 +73,70 @@ public class PlayerController : MonoBehaviour
     // Collision for collectibles
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Collectibles
         // Destroy collectible when collided with and update text
-        if (collision.tag == "Collectible")
+        if (collision.tag == "Cherry")
         {
             Destroy(collision.gameObject);
             cherries += 1;
             cherrytext.text = cherries.ToString();
+        }
+        else if (collision.tag == "Gem")
+        {
+            Destroy(collision.gameObject);
+            gems += 1;
+            gemtext.text = gems.ToString();
+        }
+
+        // Deathzones
+        // Disable movement and slow falling, play hurt animation
+        if (collision.gameObject.CompareTag("Deathzone"))
+        {
+            PlayerAnim.SetBool("Hurting", true);
+            PlayerRb.drag = 25;
+            speed = 0;
+            jumpforce = 0;
+            health--;
+            healthtext.text = health.ToString();
+        }
+
+        //DoorFinish
+        if (collision.gameObject.CompareTag("Finish") && cherries == 5 && gems == 5)
+        {
+            SceneManager.LoadScene("Finish");
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Deathzone"))
+        {
+            PlayerAnim.SetBool("Hurting", true);
+        }
+
+        if (collision.CompareTag("Platform"))
+        {
+            isGrounded = true;
+        }
+    }
+
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // Teleport player back to spawn, enable movement, disable hurting anim
+        if (collision.CompareTag("Deathzone") && health > 0)
+        {
+            transform.position = new Vector2(-3, -2);
+            jumpforce = 12;
+            PlayerRb.drag = 0;
+            PlayerAnim.SetBool("Hurting", false);
+        }
+
+        // When exiting deathzone with 0 health, destroy player and load main menu
+        if (collision.CompareTag("Deathzone") && health == 0)
+        {
+            Destroy(gameObject);
+            SceneManager.LoadScene("MainMenu");
         }
     }
     // Collision mechanics
@@ -91,6 +149,11 @@ public class PlayerController : MonoBehaviour
             PlayerAnim.SetBool("Jumping", false);
             speed = 10;
             PlayerAnim.SetBool("Hurting", false);
+            if (health == 0)
+            {
+                Destroy(gameObject);
+                SceneManager.LoadScene("MainMenu");
+            }
         }
 
         // Enemy behaviour

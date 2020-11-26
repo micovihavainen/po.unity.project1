@@ -8,6 +8,9 @@ TagManager:
   - Ground
   - Collectible
   - Enemy
+  - Deathzone
+  - Cherry
+  - Gem
   layers:
   - Default
   - TransparentFX
