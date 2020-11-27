@@ -23,6 +23,18 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI cherrytext;
     private int gems = 0;
     public TextMeshProUGUI gemtext;
+
+    public GameObject shaker; // Camera shake effect, MainCamera.
+
+    public GameObject particles;
+
+    void Explode()
+    {
+        GameObject firework = Instantiate(particles, PlayerRb.transform.position - new Vector3(0, 2, 0), Quaternion.identity);
+        firework.GetComponent<ParticleSystem>().Play();
+    }
+
+
     void Start()
     {
         PlayerRb = GetComponent<Rigidbody2D>();
@@ -145,6 +157,7 @@ public class PlayerController : MonoBehaviour
         // Ground check / disabling hurt and enabling movement when landing
         if (collision.gameObject.CompareTag("Platform"))
         {
+            
             isGrounded = true;
             PlayerAnim.SetBool("Jumping", false);
             speed = 10;
@@ -161,8 +174,10 @@ public class PlayerController : MonoBehaviour
         // Enemy dies when player is jumping and colliding
         if (collision.gameObject.CompareTag("Enemy") && isGrounded == false)
         {
+            Explode();
             Destroy(collision.gameObject);
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
+            shaker.gameObject.SendMessage("TriggerShake");
         }
 
         // When player is moving from the right, player gets thrown left and up, while playing "hurt" animation
@@ -172,6 +187,7 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerRb.AddForce(Vector2.left * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Hurting", true);
+            shaker.gameObject.SendMessage("TriggerShake");
             speed = 0;
             isGrounded = false;
             health--;
@@ -185,6 +201,7 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerRb.AddForce(Vector2.right * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Hurting", true);
+            shaker.gameObject.SendMessage("TriggerShake");
             speed = 0;
             isGrounded = false;
             health--;
