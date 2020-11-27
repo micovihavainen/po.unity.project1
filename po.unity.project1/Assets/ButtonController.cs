@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class ButtonController : MonoBehaviour
 {
+
+    [SerializeField] private AudioSource beep;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,10 +18,12 @@ public class ButtonController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            beep.Play();
             SceneManager.LoadScene("Level1");
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            beep.Play();
             Application.Quit();
         }
         if (Input.GetKeyDown(KeyCode.M))

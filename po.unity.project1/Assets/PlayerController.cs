@@ -28,13 +28,24 @@ public class PlayerController : MonoBehaviour
 
     public GameObject particles;
 
-    void Explode()
+    [SerializeField] private AudioSource RunningSound;
+    [SerializeField] private AudioSource JumpingSound;
+    [SerializeField] private AudioSource LandingSound;
+    [SerializeField] private AudioSource HurtingSound;
+    [SerializeField] private AudioSource PickupSound;
+    [SerializeField] private AudioSource Footstep;
+
+
+
+    private void footstep() // sound for animation
     {
-        GameObject firework = Instantiate(particles, PlayerRb.transform.position - new Vector3(0, 2, 0), Quaternion.identity);
+        Footstep.Play();
+    }
+    void Explode() //particle effects
+    {
+        GameObject firework = Instantiate(particles, PlayerRb.transform.position - new Vector3(0, 1, 0), Quaternion.identity);
         firework.GetComponent<ParticleSystem>().Play();
     }
-
-
     void Start()
     {
         PlayerRb = GetComponent<Rigidbody2D>();
@@ -71,6 +82,7 @@ public class PlayerController : MonoBehaviour
         {
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Jumping", true);
+            JumpingSound.Play();
             isGrounded = false;
         }
 
@@ -90,12 +102,14 @@ public class PlayerController : MonoBehaviour
         if (collision.tag == "Cherry")
         {
             Destroy(collision.gameObject);
+            PickupSound.Play();
             cherries += 1;
             cherrytext.text = cherries.ToString();
         }
         else if (collision.tag == "Gem")
         {
             Destroy(collision.gameObject);
+            PickupSound.Play();
             gems += 1;
             gemtext.text = gems.ToString();
         }
@@ -110,12 +124,18 @@ public class PlayerController : MonoBehaviour
             jumpforce = 0;
             health--;
             healthtext.text = health.ToString();
+            HurtingSound.Play();
         }
 
         //DoorFinish
         if (collision.gameObject.CompareTag("Finish") && cherries == 5 && gems == 5)
         {
+            PickupSound.Play();
             SceneManager.LoadScene("Finish");
+        }
+        else if (collision.gameObject.CompareTag("Finish"))
+        {
+            
         }
     }
 
@@ -160,6 +180,7 @@ public class PlayerController : MonoBehaviour
             
             isGrounded = true;
             PlayerAnim.SetBool("Jumping", false);
+            LandingSound.Play();
             speed = 10;
             PlayerAnim.SetBool("Hurting", false);
             if (health == 0)
@@ -178,6 +199,7 @@ public class PlayerController : MonoBehaviour
             Destroy(collision.gameObject);
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             shaker.gameObject.SendMessage("TriggerShake");
+            HurtingSound.Play();
         }
 
         // When player is moving from the right, player gets thrown left and up, while playing "hurt" animation
@@ -187,6 +209,7 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerRb.AddForce(Vector2.left * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Hurting", true);
+            HurtingSound.Play();
             shaker.gameObject.SendMessage("TriggerShake");
             speed = 0;
             isGrounded = false;
@@ -201,6 +224,7 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
             PlayerRb.AddForce(Vector2.right * jumpforce, ForceMode2D.Impulse);
             PlayerAnim.SetBool("Hurting", true);
+            HurtingSound.Play();
             shaker.gameObject.SendMessage("TriggerShake");
             speed = 0;
             isGrounded = false;

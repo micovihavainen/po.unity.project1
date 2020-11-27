@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Instructions : MonoBehaviour
 {
+    [SerializeField] private AudioSource beep;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,7 @@ public class Instructions : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            beep.Play();
             SceneManager.LoadScene("Level_1");
         }
     }

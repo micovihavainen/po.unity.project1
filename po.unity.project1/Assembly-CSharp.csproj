@@ -62,6 +62,8 @@
     <Compile Include="Assets\Instructions.cs" />
     <Compile Include="Assets\DoorFinish.cs" />
     <Compile Include="Assets\CameraController.cs" />
+    <Compile Include="Assets\opossum.cs" />
+    <Compile Include="Assets\DontDestroy.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

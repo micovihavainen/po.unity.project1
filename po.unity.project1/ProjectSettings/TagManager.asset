@@ -11,6 +11,9 @@ TagManager:
   - Deathzone
   - Cherry
   - Gem
+  - LeftBound
+  - RightBound
+  - Music
   layers:
   - Default
   - TransparentFX
